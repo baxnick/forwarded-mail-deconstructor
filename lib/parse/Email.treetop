@@ -1,0 +1,63 @@
+module Parse
+  grammar Email
+    rule full
+      s? fullname? whitespace? '<' s? email s? '>' s?
+      {
+        def export
+          elements.map{ |e| e.export if defined? e.export }.reject{ |e| e.nil? }
+        end
+      }
+    end
+
+    rule email
+      user at domain &'>'
+      {
+        def export
+          [:email, text_value.gsub(/[ \r\n]+/,'')]
+        end
+      }
+    end
+
+    rule fullname
+      chars (whitespace chars)*
+      {
+        def export
+          [:name, text_value.gsub(/\r\n?/,'').gsub(/[ \t]+/, ' ')]
+        end
+      }
+    end
+
+    rule at
+      '@'
+    end
+
+    rule user
+      linebroken_chars &at
+    end
+
+    rule domain
+      linebroken_chars
+    end
+
+    rule linebroken_chars
+      chars (newline linebroken_chars)? 
+    end
+
+    rule chars
+      [a-zA-Z0-9.\-_]+
+    end
+
+    rule whitespace
+      (s / newline)+
+    end
+
+    rule s
+      [ \t]+
+    end
+
+    rule newline
+      [\r\n]+
+    end
+  end
+end
+
