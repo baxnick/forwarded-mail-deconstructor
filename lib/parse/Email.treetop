@@ -1,12 +1,9 @@
 module Parse
   grammar Email
-    rule full
-      s? fullname? whitespace? '<' s? email s? '>' s?
-      {
-        def export
-          elements.map{ |e| e.export if defined? e.export }.reject{ |e| e.nil? }
-        end
-      }
+    include Lexical
+
+    rule participant
+      whitespace? fullname? whitespace? '<' whitespace? email whitespace? '>' whitespace?
     end
 
     rule email
@@ -22,7 +19,7 @@ module Parse
       chars (whitespace chars)*
       {
         def export
-          [:name, text_value.gsub(/\r\n?/,'').gsub(/[ \t]+/, ' ')]
+          [:name, text_value.gsub(/\r?\n?/,'').gsub(/[ \t]+/, ' ')]
         end
       }
     end
@@ -37,26 +34,6 @@ module Parse
 
     rule domain
       linebroken_chars
-    end
-
-    rule linebroken_chars
-      chars (newline linebroken_chars)? 
-    end
-
-    rule chars
-      [a-zA-Z0-9.\-_]+
-    end
-
-    rule whitespace
-      (s / newline)+
-    end
-
-    rule s
-      [ \t]+
-    end
-
-    rule newline
-      [\r\n]+
     end
   end
 end

@@ -1,8 +1,8 @@
 source :rubygems
 
 gem 'mail'
-gem 'polyglot'
 gem 'treetop'
+gem 'rake'
 
 gem 'pry'
 

@@ -1,0 +1,15 @@
+module Parse
+  grammar EmailList
+    include Email
+    include Lexical
+
+    rule list
+      participant (',' whitespace? participant)*
+      {
+        def export
+          elements.map{ |e| e.export if defined? e.export }.reject{ |e| e.nil? }
+        end
+      }
+    end
+  end
+end

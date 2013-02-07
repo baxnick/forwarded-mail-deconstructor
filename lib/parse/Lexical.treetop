@@ -1,0 +1,24 @@
+module Parse
+  grammar Lexical
+    rule linebroken_chars
+      chars (newline linebroken_chars)? 
+    end
+
+    rule chars
+      [a-zA-Z0-9.\-_]+
+    end
+
+    rule whitespace
+      (s / newline)+
+    end
+
+    rule s
+      [ \t]+
+    end
+
+    rule newline
+      [\r\n]+
+    end
+  end
+end
+
