@@ -1,0 +1,33 @@
+module Parse
+  grammar MetaSection
+    include EmailList
+    include Lexical
+
+    rule message_metadata
+      SS?
+      from
+      (date subject / date)
+      (to cc / to)
+    end
+
+    rule from
+      'From:' S? participant_entry endl <FromNode>
+    end
+
+    rule date
+      'Date:' S? line <DateNode>
+    end
+
+    rule subject
+      'Subject:' S? line <SubjectNode>
+    end
+
+    rule to
+      'To:' S? email_list endl <ToNode>
+    end
+
+    rule cc
+      'Cc:' S? email_list endl <CcNode>
+    end
+  end
+end

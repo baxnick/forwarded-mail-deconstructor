@@ -1,23 +1,31 @@
 module Parse
   grammar Lexical
-    rule linebroken_chars
-      chars (newline linebroken_chars)? 
+    rule breakable
+      (SS? ascii)+ <TextNode>
+    end
+    
+    rule line
+      [^\r\n]* endl <LineNode>
     end
 
-    rule chars
-      [a-zA-Z0-9.\-_]+
-    end
-
-    rule whitespace
-      (s / newline)+
+    rule ascii
+      [a-zA-Z0-9.\-_\*]+
     end
 
     rule s
-      [ \t]+
+      [ \t]
     end
 
-    rule newline
-      [\r\n]+
+    rule S
+      s+
+    end
+
+    rule endl
+      (S? "\r\n" / S? "\n")
+    end
+
+    rule SS
+      [ \t\r\n]+
     end
   end
 end

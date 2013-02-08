@@ -1,0 +1,42 @@
+module Parse
+  grammar EmailChain
+    include MetaSection
+    include Lexical
+
+    rule messages
+      SS?
+      forward_header
+      separator
+      (message separator messages / message)
+      SS?
+    end
+
+    rule forward_header
+      "Forwarded conversation" endl
+      subject_header
+    end
+
+    rule subject_header
+      "Subject: " line 
+    end
+
+    rule separator
+      "------" line
+    end
+
+    rule signature_start
+      "--" endl
+    end
+
+    rule message
+      message_metadata
+      freeform_section
+      (signature_start freeform_section)?
+      SS?
+    end
+
+    rule freeform_section
+      line &signature_start / line &separator / line freeform_section
+    end
+  end
+end
