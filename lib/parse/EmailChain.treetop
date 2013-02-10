@@ -3,16 +3,13 @@ module Parse
     include MetaSection
     include Lexical
 
-    rule messages
-      SS?
-      forward_header
-      separator
-      (message separator messages / message)
-      SS?
+    rule email_chain
+      SS? 
+      (message_metadata (message <MessageNode>) / forward_header)
     end
 
     rule forward_header
-      "Forwarded conversation" endl
+      line?
       subject_header
     end
 
@@ -24,19 +21,41 @@ module Parse
       "------" line
     end
 
-    rule signature_start
-      "--" endl
+    rule signature_delimiter
+      "--" endl <SignatureDelimiter>
     end
 
+    rule quote_header
+      quote_pre 1..2 SS? &quote_line <QuoteHeader>
+    end
+
+    rule quote_pre
+      !quote_prefix line
+    end
+
+    rule quote_line
+      quote_prefix line <QuoteNode>
+    end
+
+    rule quote_prefix
+      S? [>]+ S?
+    end
+
+    rule freeform_line
+      '' line <MessageLineNode>
+    end
+    # Herpderp revelation, I finally understand how to properly
+    # deconstruct the message without everything being swallowed
+    # into some huge greedy match
+    #
+    # This is the key.
     rule message
-      message_metadata
-      freeform_section
-      (signature_start freeform_section)?
-      SS?
-    end
-
-    rule freeform_section
-      line &signature_start / line &separator / line freeform_section
+      quote_header message /
+      quote_line message /
+      signature_delimiter message /
+      freeform_line message /
+      SS message /
+      eof_line # Consume any nonsense remaining
     end
   end
 end

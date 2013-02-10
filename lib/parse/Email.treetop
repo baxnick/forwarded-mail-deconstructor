@@ -7,11 +7,11 @@ module Parse
     end
 
     rule participant
-      fullname SS? '<' address S? '>' <NamedParticipantNode>
+      fullname SS? '<' address SS? '>' <NamedParticipantNode>
     end
 
     rule unknown_participant
-      ('<' address S? '>' / address) <UnknownParticipantNode>
+      ('<' address SS? '>' / address) <UnknownParticipantNode>
     end
 
     rule fullname

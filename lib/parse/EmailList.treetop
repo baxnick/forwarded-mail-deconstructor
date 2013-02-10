@@ -3,7 +3,7 @@ module Parse
     include Email
 
     rule email_list
-      (participant_entry (',' S? participant_entry)*) <EmailListNode>
+      (participant_entry (SS? ',' SS? participant_entry)*) <EmailListNode>
     end
   end
 end

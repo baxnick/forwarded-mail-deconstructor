@@ -4,10 +4,11 @@ module Parse
     include Lexical
 
     rule message_metadata
-      SS?
       from
-      (date subject / date)
-      (to cc / to)
+      date
+      subject?
+      to
+      cc?
     end
 
     rule from

@@ -5,7 +5,12 @@ module Parse
     end
     
     rule line
-      [^\r\n]* endl <LineNode>
+      [^\n]* endl <LineNode>
+    end
+    
+    # Only use this if EOF is a possibilty
+    rule eof_line
+      [^\n]* <LineNode>
     end
 
     rule ascii
@@ -21,11 +26,11 @@ module Parse
     end
 
     rule endl
-      (S? "\r\n" / S? "\n")
+      S? [\n]
     end
 
     rule SS
-      [ \t\r\n]+
+      [ \t\n]+
     end
   end
 end
